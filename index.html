@@ -57,7 +57,7 @@
         p {
             font-size: 1.2rem;
             margin-bottom: 20px;
-            color: #BUG;
+            color: #f0f0f0;
         }
 
         body.day-mode h1 { color: #DAA520; }
@@ -297,17 +297,43 @@
         // Audio Toggle
         const audio = document.getElementById('takbeer');
         const audioBtn = document.querySelector('.audio-toggle');
-        let isPlaying = true; // Audio starts playing automatically
+        let isPlaying = true; // Assume audio is playing or will play on interaction
+
+        // Attempt to play audio on page load
+        audio.play().catch(() => {
+            // If autoplay fails, wait for user interaction
+            isPlaying = false;
+            audioBtn.textContent = 'تشغيل';
+        });
+
+        // Play audio on first user interaction (click or touch)
+        function startAudioOnInteraction() {
+            if (!isPlaying) {
+                audio.play().then(() => {
+                    isPlaying = true;
+                    audioBtn.textContent = 'إيقاف';
+                }).catch(err => console.log('Audio play failed:', err));
+            }
+            // Remove event listeners after first interaction
+            document.removeEventListener('click', startAudioOnInteraction);
+            document.removeEventListener('touchstart', startAudioOnInteraction);
+        }
+
+        // Add event listeners for first interaction
+        document.addEventListener('click', startAudioOnInteraction);
+        document.addEventListener('touchstart', startAudioOnInteraction);
 
         function toggleAudio() {
             if (isPlaying) {
                 audio.pause();
                 audioBtn.textContent = 'تشغيل';
+                isPlaying = false;
             } else {
-                audio.play();
-                audioBtn.textContent = 'إيقاف';
+                audio.play().then(() => {
+                    audioBtn.textContent = 'إيقاف';
+                    isPlaying = true;
+                }).catch(err => console.log('Audio play failed:', err));
             }
-            isPlaying = !isPlaying;
         }
 
         // Name Input for Greeting
