@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Eid al-Adha Mubarak</title>
+    <title>تهنئة عيد الأضحى</title>
     <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&display=swap" rel="stylesheet">
     <style>
         * {
@@ -14,7 +14,7 @@
 
         body {
             font-family: 'Amiri', serif;
-            background: linear-gradient(135deg, #1a3c34, #2a6041);
+            background: linear-gradient(135deg, #2a2a72, #6a0572);
             color: #fff;
             overflow: hidden;
             height: 100vh;
@@ -22,6 +22,12 @@
             justify-content: center;
             align-items: center;
             position: relative;
+            transition: background 0.5s, color 0.5s;
+        }
+
+        body.day-mode {
+            background: linear-gradient(135deg, #87ceeb, #f0e68c);
+            color: #1a1a1a;
         }
 
         .container {
@@ -44,6 +50,21 @@
             color: #f0f0f0;
         }
 
+        body.day-mode h1 { color: #d4a017; }
+        body.day-mode p { color: #333; }
+
+        .name-input {
+            margin-bottom: 20px;
+        }
+
+        .name-input input {
+            padding: 10px;
+            font-size: 1rem;
+            border: none;
+            border-radius: 5px;
+            font-family: 'Amiri', serif;
+        }
+
         .countdown {
             font-size: 1.2rem;
             margin: 20px 0;
@@ -51,6 +72,11 @@
             padding: 15px;
             border-radius: 10px;
             color: #ffd700;
+        }
+
+        body.day-mode .countdown {
+            background: rgba(255, 255, 255, 0.5);
+            color: #d4a017;
         }
 
         .share-buttons {
@@ -69,14 +95,18 @@
             transition: background 0.3s;
         }
 
+        body.day-mode .share-btn {
+            background: #d4a017;
+            color: #fff;
+        }
+
         .share-btn:hover {
             background: #e6c200;
         }
 
-        .audio-toggle {
+        .audio-toggle, .theme-toggle {
             position: fixed;
             bottom: 20px;
-            right: 20px;
             padding: 10px;
             background: #ffd700;
             color: #1a3c34;
@@ -87,6 +117,14 @@
             z-index: 3;
         }
 
+        .audio-toggle { right: 20px; }
+        .theme-toggle { right: 70px; }
+
+        body.day-mode .audio-toggle, body.day-mode .theme-toggle {
+            background: #d4a017;
+            color: #fff;
+        }
+
         .decorations {
             position: absolute;
             top: 0;
@@ -95,31 +133,34 @@
             height: 100%;
             pointer-events: none;
             z-index: 1;
+            background: url('https://img.icons8.com/color/96/000000/sheep.png') bottom left/50px no-repeat,
+                        url('https://img.icons8.com/color/96/000000/kaaba.png') bottom right/50px no-repeat;
+            background-size: 50px, 50px;
         }
 
-        .star {
+        .firework {
             position: absolute;
             width: 10px;
             height: 10px;
             background: #ffd700;
-            clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
-            animation: fall 5s linear infinite;
+            border-radius: 50%;
+            animation: explode 1.5s ease-out forwards;
+            transform-origin: center;
         }
 
-        .sheep, .moon, .kaaba {
+        @keyframes explode {
+            0% { transform: scale(0); opacity: 1; }
+            100% { transform: scale(3); opacity: 0; }
+        }
+
+        .sheep, .kaaba {
             position: absolute;
             width: 50px;
             animation: float 6s ease-in-out infinite;
         }
 
         .sheep { bottom: 20px; left: 20px; }
-        .moon { top: 20px; right: 20px; }
         .kaaba { bottom: 20px; right: 20px; }
-
-        @keyframes fall {
-            0% { transform: translateY(-100vh) rotate(0deg); opacity: 1; }
-            100% { transform: translateY(100vh) rotate(360deg); opacity: 0; }
-        }
 
         @keyframes float {
             0%, 100% { transform: translateY(0); }
@@ -130,25 +171,29 @@
             h1 { font-size: 2rem; }
             p { font-size: 1.2rem; }
             .countdown { font-size: 1rem; }
-            .sheep, .moon, .kaaba { width: 40px; }
+            .sheep, .kaaba { width: 40px; }
+            .decorations { background-size: 40px, 40px; }
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>Eid Mubarak – كل عام وأنتم بخير</h1>
-        <p>May Allah bless you with happiness and peace this Eid.</p>
-        <div class="countdown" id="countdown">Eid al-Adha Countdown: Calculating...</div>
+        <h1 id="greeting">عيد مبارك – كل عام وأنتم بخير</h1>
+        <div class="name-input">
+            <input type="text" id="visitorName" placeholder="أدخل اسمك" oninput="updateGreeting()">
+        </div>
+        <p id="message">نسأل الله أن يمن عليك بالسعادة والسلام في هذا العيد.</p>
+        <div class="countdown" id="countdown">العد التنازلي لعيد الأضحى: جارٍ الحساب...</div>
         <div class="share-buttons">
-            <a href="#" class="share-btn" onclick="shareWhatsApp()">Share on WhatsApp</a>
-            <a href="#" class="share-btn" onclick="shareFacebook()">Share on Facebook</a>
+            <a href="#" class="share-btn" onclick="shareWhatsApp()">مشاركة عبر واتساب</a>
+            <a href="#" class="share-btn" onclick="shareFacebook()">مشاركة عبر فيسبوك</a>
         </div>
     </div>
-    <button class="audio-toggle" onclick="toggleAudio()">Play</button>
+    <button class="audio-toggle" onclick="toggleAudio()">تشغيل</button>
+    <button class="theme-toggle" onclick="toggleTheme()">ليلي</button>
     <div class="decorations">
-        <img class="sheep" src="https://img.icons8.com/color/48/000000/sheep.png" alt="Sheep">
-        <img class="moon" src="https://img.icons8.com/color/48/000000/crescent-moon.png" alt="Crescent Moon">
-        <img class="kaaba" src="https://img.icons8.com/color/48/000000/kaaba.png" alt="Kaaba">
+        <img class="sheep" src="https://img.icons8.com/color/48/000000/sheep.png" alt="خروف">
+        <img class="kaaba" src="https://img.icons8.com/color/48/000000/kaaba.png" alt="الكعبة">
     </div>
     <audio id="takbeer" loop>
         <source src="https://www.islamicfinder.org/media/takbeer.mp3" type="audio/mpeg">
@@ -164,7 +209,7 @@
             const distance = eidDate - now;
 
             if (distance < 0) {
-                countdown.innerHTML = "Eid al-Adha has arrived!";
+                countdown.innerHTML = "عيد الأضحى قد بدأ!";
                 return;
             }
 
@@ -173,22 +218,23 @@
             const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
             const seconds = Math.floor((distance % (1000 * 60)) / 1000);
 
-            countdown.innerHTML = `Eid al-Adha Countdown: ${days}d ${hours}h ${minutes}m ${seconds}s`;
+            countdown.innerHTML = `العد التنازلي لعيد الأضحى: ${days}ي ${hours}س ${minutes}د ${seconds}ث`;
         }
 
         setInterval(updateCountdown, 1000);
 
-        // Animated Falling Stars
-        function createStar() {
-            const star = document.createElement('div');
-            star.classList.add('star');
-            star.style.left = Math.random() * 100 + 'vw';
-            star.style.animationDuration = Math.random() * 3 + 3 + 's';
-            document.querySelector('.decorations').appendChild(star);
-            setTimeout(() => star.remove(), 5000);
+        // Fireworks Animation
+        function createFirework() {
+            const firework = document.createElement('div');
+            firework.classList.add('firework');
+            firework.style.left = Math.random() * 100 + 'vw';
+            firework.style.top = Math.random() * 100 + 'vh';
+            firework.style.background = ['#ffd700', '#ff4040', '#40c4ff'][Math.floor(Math.random() * 3)];
+            document.querySelector('.decorations').appendChild(firework);
+            setTimeout(() => firework.remove(), 1500);
         }
 
-        setInterval(createStar, 300);
+        setInterval(createFirework, 500);
 
         // Audio Toggle
         const audio = document.getElementById('takbeer');
@@ -198,24 +244,52 @@
         function toggleAudio() {
             if (isPlaying) {
                 audio.pause();
-                audioBtn.textContent = 'Play';
+                audioBtn.textContent = 'تشغيل';
             } else {
                 audio.play();
-                audioBtn.textContent = 'Pause';
+                audioBtn.textContent = 'إيقاف';
             }
             isPlaying = !isPlaying;
         }
 
-        // Social Sharing
+        // Name Input for Greeting and Sharing
+        let visitorName = '';
+        function updateGreeting() {
+            visitorName = document.getElementById('visitorName').value.trim();
+            const greeting = document.getElementById('greeting');
+            const message = document.getElementById('message');
+            if (visitorName) {
+                greeting.innerHTML = `عيد مبارك، ${visitorName} – كل عام وأنتم بخير`;
+                message.innerHTML = `نسأل الله أن يمن عليك، ${visitorName}، بالسعادة والسلام في هذا العيد.`;
+            } else {
+                greeting.innerHTML = `عيد مبارك – كل عام وأنتم بخير`;
+                message.innerHTML = `نسأل الله أن يمن عليك بالسعادة والسلام في هذا العيد.`;
+            }
+        }
+
+        // Day/Night Mode Toggle
+        const themeBtn = document.querySelector('.theme-toggle');
+        let isDayMode = false;
+
+        function toggleTheme() {
+            isDayMode = !isDayMode;
+            document.body.classList.toggle('day-mode', isDayMode);
+            themeBtn.textContent = isDayMode ? 'ليلي' : 'نهاري';
+        }
+
+        // Social Sharing with Personalized Name
         function shareWhatsApp() {
             const url = encodeURIComponent(window.location.href);
-            const text = encodeURIComponent('Eid Mubarak! Share the joy of Eid al-Adha: ');
+            const nameText = visitorName ? `${visitorName} يهنئك بعيد الأضحى! ` : '';
+            const text = encodeURIComponent(`${nameText}عيد مبارك! شارك فرحة عيد الأضحى: `);
             window.open(`https://api.whatsapp.com/send?text=${text}${url}`);
         }
 
         function shareFacebook() {
             const url = encodeURIComponent(window.location.href);
-            window.open(`https://www.facebook.com/sharer/sharer.php?u=${url}`);
+            const nameText = visitorName ? `${visitorName} يهنئك بعيد الأضحى! ` : '';
+            const text = encodeURIComponent(`${nameText}عيد مبارك! شارك فرحة عيد الأضحى: `);
+            window.open(`https://www.facebook.com/sharer/sharer.php?u=${url}&quote=${text}`);
         }
     </script>
 </body>
