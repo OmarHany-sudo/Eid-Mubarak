@@ -16,7 +16,6 @@
             font-family: 'Amiri', serif;
             background: linear-gradient(135deg, #2a2a72, #6a0572);
             color: #fff;
-            overflow: hidden;
             height: 100vh;
             display: flex;
             justify-content: center;
@@ -125,6 +124,26 @@
             color: #fff;
         }
 
+        .footer {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 1rem;
+            z-index: 3;
+        }
+
+        .footer a {
+            color: #ffd700;
+            text-decoration: none;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
+        body.day-mode .footer a { color: #d4a017; }
+
         .decorations {
             position: absolute;
             top: 0;
@@ -173,6 +192,7 @@
             .countdown { font-size: 1rem; }
             .sheep, .kaaba { width: 40px; }
             .decorations { background-size: 40px, 40px; }
+            .footer { font-size: 0.9rem; }
         }
     </style>
 </head>
@@ -191,6 +211,9 @@
     </div>
     <button class="audio-toggle" onclick="toggleAudio()">تشغيل</button>
     <button class="theme-toggle" onclick="toggleTheme()">ليلي</button>
+    <div class="footer">
+        <a href="https://omarhany-sudo.github.io/portfolio" target="_blank">صنع بواسطة عمر هاني</a>
+    </div>
     <div class="decorations">
         <img class="sheep" src="https://img.icons8.com/color/48/000000/sheep.png" alt="خروف">
         <img class="kaaba" src="https://img.icons8.com/color/48/000000/kaaba.png" alt="الكعبة">
@@ -200,6 +223,11 @@
     </audio>
 
     <script>
+        // Get name from URL parameter
+        const urlParams = new URLSearchParams(window.location.search);
+        let sharerName = urlParams.get('name') || '';
+        let visitorName = '';
+
         // Countdown Timer (Assuming Eid al-Adha 2025 is on June 6, 2025)
         const eidDate = new Date('2025-06-06T00:00:00').getTime();
         const countdown = document.getElementById('countdown');
@@ -252,13 +280,16 @@
             isPlaying = !isPlaying;
         }
 
-        // Name Input for Greeting and Sharing
-        let visitorName = '';
+        // Name Input for Greeting
         function updateGreeting() {
             visitorName = document.getElementById('visitorName').value.trim();
             const greeting = document.getElementById('greeting');
             const message = document.getElementById('message');
-            if (visitorName) {
+
+            if (sharerName && !visitorName) {
+                greeting.innerHTML = `${sharerName} يهنئك بعيد الأضحى – كل عام وأنتم بخير`;
+                message.innerHTML = `نسأل الله أن يمن عليك بالسعادة والسلام في هذا العيد.`;
+            } else if (visitorName) {
                 greeting.innerHTML = `عيد مبارك، ${visitorName} – كل عام وأنتم بخير`;
                 message.innerHTML = `نسأل الله أن يمن عليك، ${visitorName}، بالسعادة والسلام في هذا العيد.`;
             } else {
@@ -266,6 +297,9 @@
                 message.innerHTML = `نسأل الله أن يمن عليك بالسعادة والسلام في هذا العيد.`;
             }
         }
+
+        // Initialize greeting with sharerName if present
+        updateGreeting();
 
         // Day/Night Mode Toggle
         const themeBtn = document.querySelector('.theme-toggle');
@@ -279,14 +313,18 @@
 
         // Social Sharing with Personalized Name
         function shareWhatsApp() {
-            const url = encodeURIComponent(window.location.href);
+            const baseUrl = window.location.href.split('?')[0];
+            const nameParam = visitorName ? `?name=${encodeURIComponent(visitorName)}` : '';
+            const url = encodeURIComponent(baseUrl + nameParam);
             const nameText = visitorName ? `${visitorName} يهنئك بعيد الأضحى! ` : '';
             const text = encodeURIComponent(`${nameText}عيد مبارك! شارك فرحة عيد الأضحى: `);
             window.open(`https://api.whatsapp.com/send?text=${text}${url}`);
         }
 
         function shareFacebook() {
-            const url = encodeURIComponent(window.location.href);
+            const baseUrl = window.location.href.split('?')[0];
+            const nameParam = visitorName ? `?name=${encodeURIComponent(visitorName)}` : '';
+            const url = encodeURIComponent(baseUrl + nameParam);
             const nameText = visitorName ? `${visitorName} يهنئك بعيد الأضحى! ` : '';
             const text = encodeURIComponent(`${nameText}عيد مبارك! شارك فرحة عيد الأضحى: `);
             window.open(`https://www.facebook.com/sharer/sharer.php?u=${url}&quote=${text}`);
