@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Eid al-Adha Mubarak</title>
+    <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Amiri', serif;
+            background: linear-gradient(135deg, #1a3c34, #2a6041);
+            color: #fff;
+            overflow: hidden;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+        }
+
+        .container {
+            text-align: center;
+            padding: 20px;
+            max-width: 800px;
+            z-index: 2;
+        }
+
+        h1 {
+            font-size: 3rem;
+            color: #ffd700;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        p {
+            font-size: 1.5rem;
+            margin-bottom: 30px;
+            color: #f0f0f0;
+        }
+
+        .countdown {
+            font-size: 1.2rem;
+            margin: 20px 0;
+            background: rgba(0, 0, 0, 0.5);
+            padding: 15px;
+            border-radius: 10px;
+            color: #ffd700;
+        }
+
+        .share-buttons {
+            margin: 20px 0;
+        }
+
+        .share-btn {
+            display: inline-block;
+            padding: 10px 20px;
+            margin: 5px;
+            background: #ffd700;
+            color: #1a3c34;
+            text-decoration: none;
+            border-radius: 5px;
+            font-weight: bold;
+            transition: background 0.3s;
+        }
+
+        .share-btn:hover {
+            background: #e6c200;
+        }
+
+        .audio-toggle {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            padding: 10px;
+            background: #ffd700;
+            color: #1a3c34;
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 1rem;
+            z-index: 3;
+        }
+
+        .decorations {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .star {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background: #ffd700;
+            clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
+            animation: fall 5s linear infinite;
+        }
+
+        .sheep, .moon, .kaaba {
+            position: absolute;
+            width: 50px;
+            animation: float 6s ease-in-out infinite;
+        }
+
+        .sheep { bottom: 20px; left: 20px; }
+        .moon { top: 20px; right: 20px; }
+        .kaaba { bottom: 20px; right: 20px; }
+
+        @keyframes fall {
+            0% { transform: translateY(-100vh) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(100vh) rotate(360deg); opacity: 0; }
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+
+        @media (max-width: 600px) {
+            h1 { font-size: 2rem; }
+            p { font-size: 1.2rem; }
+            .countdown { font-size: 1rem; }
+            .sheep, .moon, .kaaba { width: 40px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Eid Mubarak – كل عام وأنتم بخير</h1>
+        <p>May Allah bless you with happiness and peace this Eid.</p>
+        <div class="countdown" id="countdown">Eid al-Adha Countdown: Calculating...</div>
+        <div class="share-buttons">
+            <a href="#" class="share-btn" onclick="shareWhatsApp()">Share on WhatsApp</a>
+            <a href="#" class="share-btn" onclick="shareFacebook()">Share on Facebook</a>
+        </div>
+    </div>
+    <button class="audio-toggle" onclick="toggleAudio()">Play</button>
+    <div class="decorations">
+        <img class="sheep" src="https://img.icons8.com/color/48/000000/sheep.png" alt="Sheep">
+        <img class="moon" src="https://img.icons8.com/color/48/000000/crescent-moon.png" alt="Crescent Moon">
+        <img class="kaaba" src="https://img.icons8.com/color/48/000000/kaaba.png" alt="Kaaba">
+    </div>
+    <audio id="takbeer" loop>
+        <source src="https://www.islamicfinder.org/media/takbeer.mp3" type="audio/mpeg">
+    </audio>
+
+    <script>
+        // Countdown Timer (Assuming Eid al-Adha 2025 is on June 6, 2025)
+        const eidDate = new Date('2025-06-06T00:00:00').getTime();
+        const countdown = document.getElementById('countdown');
+
+        function updateCountdown() {
+            const now = new Date().getTime();
+            const distance = eidDate - now;
+
+            if (distance < 0) {
+                countdown.innerHTML = "Eid al-Adha has arrived!";
+                return;
+            }
+
+            const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+            countdown.innerHTML = `Eid al-Adha Countdown: ${days}d ${hours}h ${minutes}m ${seconds}s`;
+        }
+
+        setInterval(updateCountdown, 1000);
+
+        // Animated Falling Stars
+        function createStar() {
+            const star = document.createElement('div');
+            star.classList.add('star');
+            star.style.left = Math.random() * 100 + 'vw';
+            star.style.animationDuration = Math.random() * 3 + 3 + 's';
+            document.querySelector('.decorations').appendChild(star);
+            setTimeout(() => star.remove(), 5000);
+        }
+
+        setInterval(createStar, 300);
+
+        // Audio Toggle
+        const audio = document.getElementById('takbeer');
+        const audioBtn = document.querySelector('.audio-toggle');
+        let isPlaying = false;
+
+        function toggleAudio() {
+            if (isPlaying) {
+                audio.pause();
+                audioBtn.textContent = 'Play';
+            } else {
+                audio.play();
+                audioBtn.textContent = 'Pause';
+            }
+            isPlaying = !isPlaying;
+        }
+
+        // Social Sharing
+        function shareWhatsApp() {
+            const url = encodeURIComponent(window.location.href);
+            const text = encodeURIComponent('Eid Mubarak! Share the joy of Eid al-Adha: ');
+            window.open(`https://api.whatsapp.com/send?text=${text}${url}`);
+        }
+
+        function shareFacebook() {
+            const url = encodeURIComponent(window.location.href);
+            window.open(`https://www.facebook.com/sharer/sharer.php?u=${url}`);
+        }
+    </script>
+</body>
+</html>
