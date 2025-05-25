@@ -57,7 +57,7 @@
         p {
             font-size: 1.2rem;
             margin-bottom: 20px;
-            color: #f0f0f0;
+            color: #BUG;
         }
 
         body.day-mode h1 { color: #DAA520; }
@@ -239,7 +239,7 @@
             <a href="#" class="share-btn" onclick="shareFacebook()">مشاركة عبر فيسبوك</a>
         </div>
     </div>
-    <button class="audio-toggle" onclick="toggleAudio()">تشغيل</button>
+    <button class="audio-toggle" onclick="toggleAudio()">إيقاف</button>
     <button class="theme-toggle" onclick="toggleTheme()">ليلي</button>
     <div class="footer">
         <a href="https://omarhany-sudo.github.io/portfolio" target="_blank">صنع بواسطة عمر هاني</a>
@@ -248,7 +248,7 @@
         <img class="sheep" src="https://img.icons8.com/color/48/000000/sheep.png" alt="خروف">
         <img class="kaaba" src="https://img.icons8.com/color/48/000000/kaaba.png" alt="الكعبة">
     </div>
-    <audio id="takbeer" loop>
+    <audio id="takbeer" autoplay loop>
         <source src="./takbeer.mp3" type="audio/mpeg">
     </audio>
 
@@ -297,7 +297,7 @@
         // Audio Toggle
         const audio = document.getElementById('takbeer');
         const audioBtn = document.querySelector('.audio-toggle');
-        let isPlaying = false;
+        let isPlaying = true; // Audio starts playing automatically
 
         function toggleAudio() {
             if (isPlaying) {
