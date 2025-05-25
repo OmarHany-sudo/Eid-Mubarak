@@ -225,7 +225,7 @@
     <script>
         // Get name from URL parameter
         const urlParams = new URLSearchParams(window.location.search);
-        let sharerName = urlParams.get('name') || '';
+        let sharerName = decodeURIComponent(urlParams.get('name') || '');
         let visitorName = '';
 
         // Countdown Timer (Assuming Eid al-Adha 2025 is on June 6, 2025)
@@ -300,16 +300,6 @@
 
         // Initialize greeting with sharerName if present
         updateGreeting();
-
-        // Day/Night Mode Toggle
-        const themeBtn = document.querySelector('.theme-toggle');
-        let isDayMode = false;
-
-        function toggleTheme() {
-            isDayMode = !isDayMode;
-            document.body.classList.toggle('day-mode', isDayMode);
-            themeBtn.textContent = isDayMode ? 'ليلي' : 'نهاري';
-        }
 
         // Social Sharing with Personalized Name
         function shareWhatsApp() {
